@@ -1,0 +1,12 @@
+### 회원가입 API 테스트
+POST http://localhost:8080/api/users/sign-up
+Content-Type: application/json
+
+{
+  "email": "guswlsdl4808@gmail.com",
+  "password": "1234",
+  "name": "박현진",
+  "nickname": "guswls",
+  "phoneNumber": "01053574808",
+  "isNotificationEnabled": true
+}
