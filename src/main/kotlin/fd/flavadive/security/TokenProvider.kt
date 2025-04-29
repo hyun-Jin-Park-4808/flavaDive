@@ -7,7 +7,6 @@ import fd.flavadive.repositories.MemberRepository
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.security.Keys
 import lombok.extern.slf4j.Slf4j
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.data.redis.core.RedisTemplate
@@ -29,7 +28,6 @@ class TokenProvider {
 
         val now = Date()
         val expiredDate = Date(now.time + ACCESS_TOKEN_EXPIRE_TIME)
-
 
         return Jwts.builder()
             .setClaims(claims) // 발행 유저 정보 저장
@@ -134,7 +132,7 @@ class TokenProvider {
         private const val ACCESS_TOKEN_EXPIRE_TIME = (1000 * 60 * 60).toLong()
         private const val REFRESH_TOKEN_EXPIRE_TIME = (1000 * 60 * 60 * 24 * 14).toLong()
         private const val RESET_TOKEN_EXPIRE_TIME = (1000 * 60 * 60).toLong()
-        private const val SECRET = "yourSecretKeyekekekekekeekekkekkekekekkekekekeekek"
-        private val KEY: SecretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET))
+        lateinit var SECRET: String
+        lateinit var KEY: SecretKey
     }
 }
