@@ -1,5 +1,7 @@
 package fd.flavadive.auth
 
+import fd.flavadive.auth.dto.SignInRequest
+import fd.flavadive.auth.dto.SignInResponse
 import fd.flavadive.auth.dto.SignUpRequest
 import fd.flavadive.common.response.ApiResponse
 import fd.flavadive.common.response.LastInsertedId
@@ -22,5 +24,14 @@ class AuthController(
     ): ResponseEntity<ApiResponse<LastInsertedId>> {
         val response = authService.signUp(signUpRequest)
         return ResponseEntity.ok(ApiResponse(LastInsertedId(response)))
+    }
+
+    @PostMapping("sign-in")
+    fun signIn(
+        @Valid @RequestBody
+        signInRequest: SignInRequest
+    ): ResponseEntity<ApiResponse<SignInResponse>> {
+        val result = authService.signIn(signInRequest)
+        return ResponseEntity.ok(ApiResponse(result))
     }
 }

@@ -10,3 +10,12 @@ Content-Type: application/json
   "phoneNumber": "01053574808",
   "isNotificationEnabled": true
 }
+
+### 로그인 API 테스트
+POST http://localhost:8080/api/users/sign-in
+Content-Type: application/json
+
+{
+  "email": "guswlsdl4808@gmail.com",
+  "password": "1234"
+}
