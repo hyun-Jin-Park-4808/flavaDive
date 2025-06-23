@@ -1,6 +1,7 @@
 package fd.flavadive.service
 
 import fd.flavadive.auth.AuthService
+import fd.flavadive.auth.dto.FindEmailRequest
 import fd.flavadive.auth.dto.SignInRequest
 import fd.flavadive.auth.dto.SignUpRequest
 import fd.flavadive.auth.dto.toEntity
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.Test
 import fd.flavadive.common.enums.Role
+import fd.flavadive.repositories.MemberEmailOnly
 import fd.flavadive.security.TokenProvider
 
 @ExtendWith(MockKExtension::class)
@@ -63,7 +65,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `이미 존재하는 이메일이면 예외를 던진다`() {
+    fun `회원가입-이미 존재하는 이메일이면 예외를 던진다`() {
         // given
         val request = createSignUpRequest()
         every { memberRepository.existsByEmail("test@example.com") } returns true
@@ -76,7 +78,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `사업자 등록번호가 있으면 Role은 ADMIN으로 설정된다`() {
+    fun `회원가입-사업자 등록번호가 있으면 Role은 ADMIN으로 설정된다`() {
         // given
         val request = createSignUpRequest(businessRegistrationNumber = "123-45-67890")
         val dummyMember = request.toEntity()
@@ -95,7 +97,7 @@ class AuthServiceTest {
 
 
     @Test
-    fun `비밀번호는 암호화되어 저장된다`() {
+    fun `회원가입-비밀번호는 암호화되어 저장된다`() {
         // given
         val request = createSignUpRequest()
         val dummyMember = request.toEntity()
@@ -113,7 +115,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `저장된 Member의 id가 null이면 INVALID_REQUEST 예외를 던진다`() {
+    fun `회원가입-저장된 Member의 id가 null이면 INVALID_REQUEST 예외를 던진다`() {
         // given
         val request = createSignUpRequest()
         val dummyMember = request.toEntity()
@@ -151,8 +153,14 @@ class AuthServiceTest {
         isNotificationEnabled = true
     )
 
+    private fun createFindEmailRequest(
+        phoneNumber: String = "123-45-67890",
+    ) = FindEmailRequest(
+        phoneNumber = phoneNumber,
+    )
+
     @Test
-    fun `멤버가 존재하고, 패스워드가 일치한다`() {
+    fun `로그인-멤버가 존재하고, 패스워드가 일치한다`() {
         // given
         val request = createSignInRequest()
         val foundMember = createTestMember()
@@ -172,7 +180,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `멤버가 존재하지 않으면 예외를 던진다`() {
+    fun `로그인-멤버가 존재하지 않으면 예외를 던진다`() {
         // given
         val request = createSignInRequest()
         every { memberRepository.findByEmail(request.email) } returns null
@@ -185,7 +193,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `비밀번호가 틀리면 예외를 던진다`() {
+    fun `로그인-비밀번호가 틀리면 예외를 던진다`() {
         // given
         val request = createSignInRequest()
         val foundMember = createTestMember()
@@ -198,4 +206,35 @@ class AuthServiceTest {
         }
         assertEquals(ErrorCode.WRONG_PASSWORD, exception.errorCode)
     }
+
+    @Test
+    fun `비밀번호 찾기-멤버가 존재하지 않으면 예외를 던진다`() {
+        // given
+        val request = createFindEmailRequest()
+        every { memberRepository.findByPhoneNumber(request.phoneNumber) } returns null
+
+        // when & then
+        val exception = assertThrows<FlavaException> {
+            authService.findEmail(request)
+        }
+        assertEquals(ErrorCode.NOT_FOUND, exception.errorCode)
+    }
+
+    @Test
+    fun `비밀번호 찾기-멤버가 존재한다`() {
+        // given
+        val request = createFindEmailRequest()
+        val foundMember = createTestMember()
+        val projection = object : MemberEmailOnly {
+            override fun getEmail(): String = foundMember.email
+        }
+        every { memberRepository.findByPhoneNumber(request.phoneNumber) } returns projection
+
+        // when
+        val result = authService.findEmail(request)
+
+        // then
+        assertEquals(foundMember.email, result.email)
+    }
+
 }
