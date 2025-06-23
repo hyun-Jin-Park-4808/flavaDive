@@ -1,9 +1,6 @@
 package fd.flavadive.auth
 
-import fd.flavadive.auth.dto.SignInRequest
-import fd.flavadive.auth.dto.SignInResponse
-import fd.flavadive.auth.dto.SignUpRequest
-import fd.flavadive.auth.dto.toEntity
+import fd.flavadive.auth.dto.*
 import fd.flavadive.common.enums.Role
 import fd.flavadive.entities.Member
 import fd.flavadive.exception.ErrorCode
@@ -50,5 +47,12 @@ class AuthService(
             throw FlavaException(ErrorCode.WRONG_PASSWORD)
         }
         return member
+    }
+
+    @Transactional
+    fun findEmail(findEmailRequest: FindEmailRequest): FindEmailResponse {
+        val email = memberRepository.findByPhoneNumber(findEmailRequest.phoneNumber)?.getEmail()
+            ?: throw FlavaException(ErrorCode.NOT_FOUND)
+        return FindEmailResponse(email)
     }
 }

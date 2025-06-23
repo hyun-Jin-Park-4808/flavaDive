@@ -73,6 +73,7 @@ class SecurityConfig {
                     .requestMatchers(
                         "/api/users/sign-up",
                         "/api/users/sign-in",
+                        "/api/users/find-id",
                     )
                     .permitAll()
                     .anyRequest().authenticated()

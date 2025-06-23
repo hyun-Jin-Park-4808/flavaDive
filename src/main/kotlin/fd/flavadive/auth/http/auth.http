@@ -7,7 +7,7 @@ Content-Type: application/json
   "password": "1234",
   "name": "박현진",
   "nickname": "guswls",
-  "phoneNumber": "01053574808",
+  "phoneNumber": "01012345678",
   "isNotificationEnabled": true
 }
 
@@ -18,4 +18,12 @@ Content-Type: application/json
 {
   "email": "guswlsdl4808@gmail.com",
   "password": "1234"
+}
+
+### 아이디 찾기 API 테스트
+POST http://localhost:8080/api/users/find-id
+Content-Type: application/json
+
+{
+  "phoneNumber": "01012345677"
 }
