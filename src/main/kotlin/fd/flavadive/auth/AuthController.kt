@@ -3,12 +3,10 @@ package fd.flavadive.auth
 import fd.flavadive.auth.dto.*
 import fd.flavadive.common.response.ApiResponse
 import fd.flavadive.common.response.LastInsertedId
+import fd.flavadive.common.response.Success
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("api/users")
 @RestController
@@ -40,5 +38,14 @@ class AuthController(
     ): ResponseEntity<ApiResponse<FindEmailResponse>> {
         val result = authService.findEmail(request)
         return ResponseEntity.ok(ApiResponse(result))
+    }
+
+    @PatchMapping("reset-password")
+    fun resetPassword(
+        @Valid @RequestBody
+        request: ResetPasswordRequest
+    ): ResponseEntity<ApiResponse<Success>> {
+        val result = authService.resetPassword(request)
+        return ResponseEntity.ok(ApiResponse(Success(result)))
     }
 }

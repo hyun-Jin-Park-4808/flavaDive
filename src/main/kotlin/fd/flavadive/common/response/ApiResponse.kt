@@ -4,8 +4,8 @@ data class ApiResponse<T>(
     val data: T? = null
 )
 
-data class AffectedRows(
-    val affectedRows: Int
+data class Success(
+    val success: Boolean
 )
 
 data class LastInsertedId(

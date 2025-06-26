@@ -7,7 +7,7 @@ Content-Type: application/json
   "password": "1234",
   "name": "박현진",
   "nickname": "guswls",
-  "phoneNumber": "01012345678",
+  "phoneNumber": "01012345677",
   "isNotificationEnabled": true
 }
 
@@ -26,4 +26,22 @@ Content-Type: application/json
 
 {
   "phoneNumber": "01012345677"
+}
+
+### 로그인 API 테스트
+POST http://localhost:8080/api/users/sign-in
+Content-Type: application/json
+
+{
+  "email": "guswlsdl4808@gmail.com",
+  "password": "1234"
+}
+
+### 비밀번호 재설정 API 테스트
+PATCH http://localhost:8080/api/users/reset-password
+Content-Type: application/json
+
+{
+  "phoneNumber": "01012345677",
+  "newPassword": "1234!!"
 }

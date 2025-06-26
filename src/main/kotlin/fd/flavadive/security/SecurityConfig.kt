@@ -74,6 +74,7 @@ class SecurityConfig {
                         "/api/users/sign-up",
                         "/api/users/sign-in",
                         "/api/users/find-id",
+                        "/api/users/reset-password",
                     )
                     .permitAll()
                     .anyRequest().authenticated()

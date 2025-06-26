@@ -51,8 +51,21 @@ class AuthService(
 
     @Transactional
     fun findEmail(findEmailRequest: FindEmailRequest): FindEmailResponse {
-        val email = memberRepository.findByPhoneNumber(findEmailRequest.phoneNumber)?.getEmail()
+        val email = memberRepository.findByPhoneNumber(findEmailRequest.phoneNumber)?.email
             ?: throw FlavaException(ErrorCode.NOT_FOUND)
         return FindEmailResponse(email)
+    }
+
+    @Transactional
+    fun resetPassword(resetPasswordRequest: ResetPasswordRequest): Boolean {
+        val member = memberRepository.findByPhoneNumber(resetPasswordRequest.phoneNumber)
+            ?: throw FlavaException(ErrorCode.NOT_FOUND)
+        if (passwordEncoder.matches(resetPasswordRequest.newPassword, member.password)) {
+            throw FlavaException(ErrorCode.SAME_PASSWORD)
+        }
+
+        member.password = passwordEncoder.encode(resetPasswordRequest.newPassword)
+
+        return true
     }
 }

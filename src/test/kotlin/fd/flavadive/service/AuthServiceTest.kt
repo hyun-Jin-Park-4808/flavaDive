@@ -5,24 +5,23 @@ import fd.flavadive.auth.dto.FindEmailRequest
 import fd.flavadive.auth.dto.SignInRequest
 import fd.flavadive.auth.dto.SignUpRequest
 import fd.flavadive.auth.dto.toEntity
+import fd.flavadive.common.enums.Role
 import fd.flavadive.entities.Member
 import fd.flavadive.exception.ErrorCode
 import fd.flavadive.exception.FlavaException
 import fd.flavadive.repositories.MemberRepository
+import fd.flavadive.security.TokenProvider
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import org.junit.jupiter.api.extension.ExtendWith
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.Test
-import fd.flavadive.common.enums.Role
-import fd.flavadive.repositories.MemberEmailOnly
-import fd.flavadive.security.TokenProvider
 
 @ExtendWith(MockKExtension::class)
 class AuthServiceTest {
@@ -225,10 +224,8 @@ class AuthServiceTest {
         // given
         val request = createFindEmailRequest()
         val foundMember = createTestMember()
-        val projection = object : MemberEmailOnly {
-            override fun getEmail(): String = foundMember.email
-        }
-        every { memberRepository.findByPhoneNumber(request.phoneNumber) } returns projection
+
+        every { memberRepository.findByPhoneNumber(request.phoneNumber) } returns foundMember
 
         // when
         val result = authService.findEmail(request)
