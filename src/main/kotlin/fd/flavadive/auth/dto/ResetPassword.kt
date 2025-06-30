@@ -1,6 +1,6 @@
 package fd.flavadive.auth.dto
 
 data class ResetPasswordRequest(
-    val phoneNumber: String,
+    val token: String,
     val newPassword: String
 )

@@ -7,6 +7,7 @@ import fd.flavadive.exception.ErrorCode
 import fd.flavadive.exception.FlavaException
 import fd.flavadive.repositories.MemberRepository
 import fd.flavadive.security.TokenProvider
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,6 +17,7 @@ class AuthService(
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
     private val tokenProvider: TokenProvider,
+    private val redisTemplate: RedisTemplate<String, String>,
 ) {
     @Transactional
     fun signUp(signUpRequest: SignUpRequest): Long {
@@ -58,14 +60,24 @@ class AuthService(
 
     @Transactional
     fun resetPassword(resetPasswordRequest: ResetPasswordRequest): Boolean {
-        val member = memberRepository.findByPhoneNumber(resetPasswordRequest.phoneNumber)
+        if (!tokenProvider.validateResetToken(resetPasswordRequest.token)) {
+            throw FlavaException(ErrorCode.TOKEN_EXPIRED)
+        }
+
+        val email = tokenProvider.getUserEmailForResetToken(resetPasswordRequest.token)
+        val resetKey = "reset:$email";
+
+        if (resetPasswordRequest.token != redisTemplate.opsForValue().get(resetKey)) {
+            throw FlavaException(ErrorCode.ALREADY_USED_TOKEN)
+        }
+
+        val member = memberRepository.findByEmail(email)
             ?: throw FlavaException(ErrorCode.NOT_FOUND)
+
         if (passwordEncoder.matches(resetPasswordRequest.newPassword, member.password)) {
             throw FlavaException(ErrorCode.SAME_PASSWORD)
         }
-
         member.password = passwordEncoder.encode(resetPasswordRequest.newPassword)
-
         return true
     }
 }
