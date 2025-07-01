@@ -42,6 +42,6 @@ PATCH http://localhost:8080/api/users/reset-password
 Content-Type: application/json
 
 {
-  "phoneNumber": "01012345677",
+  "token": "01012345677",
   "newPassword": "1234!!"
 }
