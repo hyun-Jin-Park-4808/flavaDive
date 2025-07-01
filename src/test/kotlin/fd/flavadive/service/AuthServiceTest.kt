@@ -1,10 +1,7 @@
 package fd.flavadive.service
 
 import fd.flavadive.auth.AuthService
-import fd.flavadive.auth.dto.FindEmailRequest
-import fd.flavadive.auth.dto.SignInRequest
-import fd.flavadive.auth.dto.SignUpRequest
-import fd.flavadive.auth.dto.toEntity
+import fd.flavadive.auth.dto.*
 import fd.flavadive.common.enums.Role
 import fd.flavadive.entities.Member
 import fd.flavadive.exception.ErrorCode
@@ -20,6 +17,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.Test
 
@@ -33,6 +31,9 @@ class AuthServiceTest {
 
     @MockK
     lateinit var tokenProvider: TokenProvider
+
+    @MockK
+    lateinit var redisTemplate: RedisTemplate<String, String>
 
     @InjectMockKs
     lateinit var authService: AuthService
@@ -140,8 +141,7 @@ class AuthServiceTest {
     )
 
     private fun createTestMember(
-        email: String = "test@example.com",
-        password: String = "password123"
+        email: String = "test@example.com"
     ) = Member(
         email = email,
         password = "encodedPassword",
@@ -156,6 +156,14 @@ class AuthServiceTest {
         phoneNumber: String = "123-45-67890",
     ) = FindEmailRequest(
         phoneNumber = phoneNumber,
+    )
+
+    private fun createResetPasswordRequest(
+        token: String = "resetToken",
+        newPassword: String = "newPassword123"
+    ) = ResetPasswordRequest(
+        token = token,
+        newPassword = newPassword
     )
 
     @Test
@@ -207,7 +215,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `비밀번호 찾기-멤버가 존재하지 않으면 예외를 던진다`() {
+    fun `아이디 찾기-멤버가 존재하지 않으면 예외를 던진다`() {
         // given
         val request = createFindEmailRequest()
         every { memberRepository.findByPhoneNumber(request.phoneNumber) } returns null
@@ -220,7 +228,7 @@ class AuthServiceTest {
     }
 
     @Test
-    fun `비밀번호 찾기-멤버가 존재한다`() {
+    fun `아이디 찾기-멤버가 존재한다`() {
         // given
         val request = createFindEmailRequest()
         val foundMember = createTestMember()
@@ -232,6 +240,88 @@ class AuthServiceTest {
 
         // then
         assertEquals(foundMember.email, result.email)
+    }
+
+    // 비밀번호 초기화
+    @Test
+    fun `비밀번호 찾기-토큰이 만료되었으면 예외를 던진다`() {
+        // given
+        val request = createResetPasswordRequest()
+        every { tokenProvider.validateResetToken(request.token) } returns false
+
+        // when & then
+        val exception = assertThrows<FlavaException> {
+            authService.resetPassword(request)
+        }
+        assertEquals(ErrorCode.TOKEN_EXPIRED, exception.errorCode)
+    }
+
+    @Test
+    fun `비밀번호 찾기-토큰이 이미 사용되었으면 예외를 던진다`() {
+        // given
+        val request = createResetPasswordRequest()
+        every { tokenProvider.validateResetToken(request.token) } returns true
+        every { tokenProvider.getUserEmailForResetToken(request.token) } returns "email"
+        every { redisTemplate.opsForValue().get("reset:email") } returns null
+
+        // when & then
+        val exception = assertThrows<FlavaException> {
+            authService.resetPassword(request)
+        }
+        assertEquals(ErrorCode.ALREADY_USED_TOKEN, exception.errorCode)
+    }
+
+    @Test
+    fun `비밀번호 찾기-토큰 이메일 정보에 해당하는 멤버가 없으면 예외를 던진다`() {
+        // given
+        val request = createResetPasswordRequest()
+        every { tokenProvider.validateResetToken(request.token) } returns true
+        every { tokenProvider.getUserEmailForResetToken(request.token) } returns "email"
+        every { redisTemplate.opsForValue().get("reset:email") } returns request.token
+        every { memberRepository.findByEmail("email") } returns null
+
+        // when & then
+        val exception = assertThrows<FlavaException> {
+            authService.resetPassword(request)
+        }
+        assertEquals(ErrorCode.NOT_FOUND, exception.errorCode)
+    }
+
+    @Test
+    fun `비밀번호 찾기-기존 비밀번호와 같은 비밀번호를 입력하면 예외를 던진다`() {
+        // given
+        val request = createResetPasswordRequest()
+        val foundMember = createTestMember()
+        every { tokenProvider.validateResetToken(request.token) } returns true
+        every { tokenProvider.getUserEmailForResetToken(request.token) } returns "email"
+        every { redisTemplate.opsForValue().get("reset:email") } returns request.token
+        every { memberRepository.findByEmail("email") } returns foundMember
+        every { passwordEncoder.matches(request.newPassword, foundMember.password) } returns true
+
+        // when & then
+        val exception = assertThrows<FlavaException> {
+            authService.resetPassword(request)
+        }
+        assertEquals(ErrorCode.SAME_PASSWORD, exception.errorCode)
+    }
+
+    @Test
+    fun `비밀번호 찾기-토큰이 유효하고, 멤버가 존재하고, 새로운 패스워드를 입력한다`() {
+        // given
+        val request = createResetPasswordRequest()
+        val foundMember = createTestMember()
+        every { tokenProvider.validateResetToken(request.token) } returns true
+        every { tokenProvider.getUserEmailForResetToken(request.token) } returns "email"
+        every { redisTemplate.opsForValue().get("reset:email") } returns request.token
+        every { memberRepository.findByEmail("email") } returns foundMember
+        every { passwordEncoder.matches(request.newPassword, foundMember.password) } returns false
+        every { passwordEncoder.encode(request.newPassword) } returns "encodedNewPassword"
+        every { redisTemplate.delete("reset:email") } returns true
+        // when
+        val result = authService.resetPassword(request)
+
+        // then
+        assertEquals(true, result)
     }
 
 }

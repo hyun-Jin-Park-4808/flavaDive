@@ -65,7 +65,7 @@ class AuthService(
         }
 
         val email = tokenProvider.getUserEmailForResetToken(resetPasswordRequest.token)
-        val resetKey = "reset:$email";
+        val resetKey = "reset:$email"
 
         if (resetPasswordRequest.token != redisTemplate.opsForValue().get(resetKey)) {
             throw FlavaException(ErrorCode.ALREADY_USED_TOKEN)
@@ -78,6 +78,7 @@ class AuthService(
             throw FlavaException(ErrorCode.SAME_PASSWORD)
         }
         member.password = passwordEncoder.encode(resetPasswordRequest.newPassword)
+        redisTemplate.delete(resetKey)
         return true
     }
 }
