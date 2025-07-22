@@ -2,6 +2,7 @@ package fd.flavadive.auth
 
 import fd.flavadive.auth.dto.*
 import fd.flavadive.common.enums.Role
+import fd.flavadive.common.response.Success
 import fd.flavadive.entities.Member
 import fd.flavadive.exception.ErrorCode
 import fd.flavadive.exception.FlavaException
@@ -59,7 +60,7 @@ class AuthService(
     }
 
     @Transactional
-    fun resetPassword(resetPasswordRequest: ResetPasswordRequest): Boolean {
+    fun resetPassword(resetPasswordRequest: ResetPasswordRequest): Success {
         if (!tokenProvider.validateResetToken(resetPasswordRequest.token)) {
             throw FlavaException(ErrorCode.TOKEN_EXPIRED)
         }
@@ -79,6 +80,17 @@ class AuthService(
         }
         member.password = passwordEncoder.encode(resetPasswordRequest.newPassword)
         redisTemplate.delete(resetKey)
-        return true
+        return Success(true)
+    }
+
+    @Transactional
+    fun logout(accessToken: String): Success {
+        val email = tokenProvider.getUserEmail(accessToken)
+        if (redisTemplate.opsForValue().get(email) == null) {
+            throw FlavaException(ErrorCode.TOKEN_EXPIRED)
+        }
+        redisTemplate.delete(email) // 로그인 시 저장된 리프레시 토큰 삭제
+        redisTemplate.opsForValue().set(email, accessToken) // 로그인할 때 이 엑세스 토큰 존재하면 에러 발생
+        return Success(true)
     }
 }

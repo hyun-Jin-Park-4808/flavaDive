@@ -46,6 +46,16 @@ class AuthController(
         request: ResetPasswordRequest
     ): ResponseEntity<ApiResponse<Success>> {
         val result = authService.resetPassword(request)
-        return ResponseEntity.ok(ApiResponse(Success(result)))
+        return ResponseEntity.ok(ApiResponse(result))
     }
+
+    @PostMapping("logout")
+    fun logout(
+        @RequestHeader("Authorization") authHeader: String,
+    ): ResponseEntity<ApiResponse<Success>> {
+        val token = authHeader.substringAfter("Bearer ")
+        val result = authService.logout(token)
+        return ResponseEntity.ok(ApiResponse(result))
+    }
+
 }

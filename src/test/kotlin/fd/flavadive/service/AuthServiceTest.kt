@@ -3,6 +3,7 @@ package fd.flavadive.service
 import fd.flavadive.auth.AuthService
 import fd.flavadive.auth.dto.*
 import fd.flavadive.common.enums.Role
+import fd.flavadive.common.response.Success
 import fd.flavadive.entities.Member
 import fd.flavadive.exception.ErrorCode
 import fd.flavadive.exception.FlavaException
@@ -13,6 +14,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -321,7 +324,35 @@ class AuthServiceTest {
         val result = authService.resetPassword(request)
 
         // then
-        assertEquals(true, result)
+        assertEquals(Success(true), result)
     }
 
+    @Test
+    fun `로그아웃-유저에 대한 리프레시 토큰이 레디스에 없으면 예외를 던진다`() {
+        // given
+        val accessToken = "access-token"
+        every { tokenProvider.getUserEmail(accessToken) } returns "email@email.com"
+        every { redisTemplate.opsForValue().get("email@email.com") } returns null
+
+        // when & then
+        val exception = assertThrows<FlavaException> {
+            authService.logout(accessToken)
+        }
+        assertEquals(ErrorCode.TOKEN_EXPIRED, exception.errorCode)
+    }
+
+    @Test
+    fun `로그아웃-레디스에 리프레시 토큰이 존재하면 로그아웃에 성공한다`() {
+        // given
+        val accessToken = "access-token"
+        every { tokenProvider.getUserEmail(accessToken) } returns "email@email.com"
+        every { redisTemplate.opsForValue().get("email@email.com") } returns "refresh-token"
+        every { redisTemplate.delete("email@email.com") } returns true
+        every { redisTemplate.opsForValue().set("email@email.com", accessToken) } just runs
+        // when
+        val result = authService.logout(accessToken)
+
+        // then
+        assertEquals(Success(true), result)
+    }
 }

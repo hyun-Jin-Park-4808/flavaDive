@@ -66,13 +66,13 @@ class TokenProvider {
         if (!StringUtils.hasText(token)) {
             return false
         }
-        validateRefreshToken(token)
+        validateTokenNotLoggedOut(token)
         val claims: Claims = this.parseClaims(token)
         return !claims.expiration.before(Date())
     }
 
-    private fun validateRefreshToken(token: String) {
-        if (token == redisTemplate?.opsForValue()?.get(getUserEmail(token))) {
+    private fun validateTokenNotLoggedOut(accessToken: String) {
+        if (accessToken == redisTemplate?.opsForValue()?.get(getUserEmail(accessToken))) {
             throw FlavaException(ErrorCode.TOKEN_EXPIRED)
         }
     }

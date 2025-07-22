@@ -44,7 +44,7 @@ class JwtAuthenticationFilter(
                 filterChain.doFilter(request, response)  // 토큰이 없어도 다음 필터로 진행
                 return
             }
-            if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) { // 토큰이 실제 텍스트를 가지고 있으며, 유효한지 검증
+            if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) { // 토큰이 실제 텍스트를 가지고 있으며, 유효한지 검증(레디스에 동일 토큰이 없어야 함)
                 val auth: Authentication = tokenProvider.getAuthentication(token) // 토큰에서 인증 정보 가져옴.
                 SecurityContextHolder.getContext().authentication = auth // 인증 정보를 보안 컨텍스트에 설정
             } else {
