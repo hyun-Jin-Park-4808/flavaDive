@@ -45,3 +45,8 @@ Content-Type: application/json
   "token": "01012345677",
   "newPassword": "1234!!"
 }
+
+### 로그아웃 API 테스트
+POST http://localhost:8080/api/users/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzUzMzY2NjU1LCJleHAiOjE3NTMzNzAyNTV9.9lwshrJv3gabEskeKBEQi0BzVtcTw0DJ5qiv6uxwGgRYsXm7hb4xDfvA2rq1lCQt9a9i9pZGfbO3u-oo5XapEA

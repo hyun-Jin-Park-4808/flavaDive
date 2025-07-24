@@ -13,15 +13,18 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.crypto.SecretKey
 
 @Slf4j
-class TokenProvider {
-    private val redisTemplate: RedisTemplate<String, String>? = null
-    private val memberRepository: MemberRepository? = null
+@Component
+class TokenProvider(
+    private val redisTemplate: RedisTemplate<String, String>,
+    private val memberRepository: MemberRepository
+) {
 
     fun generateAccessToken(email: String?): String {
         val claims: Claims = Jwts.claims().setSubject(email)
@@ -40,19 +43,25 @@ class TokenProvider {
     fun generateAndSaveRefreshToken(email: String): String {
         val refreshToken = RefreshToken(email, UUID.randomUUID().toString())
         val token: String = refreshToken.refreshToken
+    try {
 
-        redisTemplate?.opsForValue()?.set(
+        redisTemplate.opsForValue().set(
             email,  // redis에서 사용할 key
             token,  // redis에서 사용할 value
             REFRESH_TOKEN_EXPIRE_TIME,  // refresh token이 저장되는 기간
             TimeUnit.MILLISECONDS
         )
         return token
+
+    } catch (ex: Exception) {
+        log.error("Failed to save refresh token to Redis", ex)
+        throw ex
+    }
     }
 
     fun getAuthentication(token: String?): Authentication {
         val email = this.getUserEmail(token) // 토큰에서 이메일 추출
-        val userDetails: UserDetails = memberRepository?.findByEmail(email)
+        val userDetails: UserDetails = memberRepository.findByEmail(email)
             ?: throw FlavaException(ErrorCode.NOT_FOUND)
 
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
@@ -72,7 +81,7 @@ class TokenProvider {
     }
 
     private fun validateTokenNotLoggedOut(accessToken: String) {
-        if (accessToken == redisTemplate?.opsForValue()?.get(getUserEmail(accessToken))) {
+        if (accessToken == redisTemplate.opsForValue().get(getUserEmail(accessToken))) {
             throw FlavaException(ErrorCode.TOKEN_EXPIRED)
         }
     }

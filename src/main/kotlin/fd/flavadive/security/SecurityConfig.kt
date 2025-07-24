@@ -1,5 +1,6 @@
 package fd.flavadive.security
 
+import lombok.extern.slf4j.Slf4j
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -15,28 +16,15 @@ import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.util.*
 
-
+@Slf4j
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+) {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
-    }
-
-    @Bean
-    fun tokenProvider(): TokenProvider {
-        return TokenProvider() // 필요한 파라미터가 있다면 추가
-    }
-
-    @Bean
-    fun jwtAuthenticationEntryPoint(): JwtAuthenticationEntryPoint {
-        return JwtAuthenticationEntryPoint()
-    }
-
-    @Bean
-    fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
-        return JwtAuthenticationFilter(jwtAuthenticationEntryPoint(), tokenProvider())
     }
 
     @Bean
@@ -79,7 +67,7 @@ class SecurityConfig {
                     .permitAll()
                     .anyRequest().authenticated()
             }
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .formLogin { obj: FormLoginConfigurer<HttpSecurity> -> obj.disable() }
 
         return http.build()

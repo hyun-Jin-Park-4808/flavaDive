@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 class AuthController(
     private val authService: AuthService,
 ) {
-    @PostMapping("sign-up")
+    @PostMapping("/sign-up")
     fun signUp(
         @Valid @RequestBody
         signUpRequest: SignUpRequest
@@ -22,7 +22,7 @@ class AuthController(
         return ResponseEntity.ok(ApiResponse(LastInsertedId(response)))
     }
 
-    @PostMapping("sign-in")
+    @PostMapping("/sign-in")
     fun signIn(
         @Valid @RequestBody
         signInRequest: SignInRequest
@@ -31,7 +31,7 @@ class AuthController(
         return ResponseEntity.ok(ApiResponse(result))
     }
 
-    @PostMapping("find-id")
+    @PostMapping("/find-id")
     fun findEmail(
         @Valid @RequestBody
         request: FindEmailRequest
@@ -49,7 +49,7 @@ class AuthController(
         return ResponseEntity.ok(ApiResponse(result))
     }
 
-    @PostMapping("logout")
+    @PostMapping("/logout")
     fun logout(
         @RequestHeader("Authorization") authHeader: String,
     ): ResponseEntity<ApiResponse<Success>> {
@@ -57,5 +57,4 @@ class AuthController(
         val result = authService.logout(token)
         return ResponseEntity.ok(ApiResponse(result))
     }
-
 }
