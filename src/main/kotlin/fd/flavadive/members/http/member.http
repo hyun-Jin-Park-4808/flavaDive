@@ -1,4 +1,13 @@
 ### 멤버 조회 API 테스트
-GET http://localhost:8080/api/users/2
+GET http://localhost:8080/api/users/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzUzMzY2Njc4LCJleHAiOjE3NTMzNzAyNzh9.MovN3m-1AUHUe3j1CW8neXpb5ZAgksgakwApYLWPB56RzTpSADzbmATCFbqR6H5GL9mTOBOhhls9e7PqDTTs8w
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzUzODgwNTc0LCJleHAiOjE3NTM4ODQxNzR9.gOoTkai5CpUFyYiDKKcgeGgKTdS99chsdRAeGa0yband_CCivAuE1CatyyP7wK5VAFGQ6eOu48wP6AKoQfBHog
+
+### 멤버 수정 API 테스트
+PATCH http://localhost:8080/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzUzODgwNTc0LCJleHAiOjE3NTM4ODQxNzR9.gOoTkai5CpUFyYiDKKcgeGgKTdS99chsdRAeGa0yband_CCivAuE1CatyyP7wK5VAFGQ6eOu48wP6AKoQfBHog
+
+{
+  "nickname": "newNew"
+}

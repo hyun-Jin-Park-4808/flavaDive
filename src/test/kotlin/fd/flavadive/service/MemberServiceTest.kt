@@ -71,7 +71,4 @@ class MemberServiceTest {
         assertEquals(foundMember.mannerScore, result.mannerScore)
         assertEquals(foundMember.isMonthlyEvaluator, result.isMonthlyEvaluator)
     }
-
-
-
 }

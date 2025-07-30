@@ -16,6 +16,9 @@ class Member (
     var role: Role,
 
     var email: String,
+
+    // 아래서 오버라이드한 getPassword()와 코틀린이 자동생성하는 getter 가 충돌하기 때문에
+    // JVM 시그니처 이름을 다르게 구분해줘야 한다.
     @get:JvmName("getMemberPassword")
     var password: String,
     var name: String,
