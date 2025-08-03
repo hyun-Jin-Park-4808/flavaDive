@@ -1,20 +1,23 @@
 package fd.flavadive.entities
 
-import jakarta.persistence.Entity
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "CHAT_ROOM")
 class ChatRoom (
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_id", nullable = false)
+    var member: Member,
 
-    @ManyToOne
-    @JoinColumn(name = "HOST_ID")
-    val member: Member,
-
-    @ManyToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false, unique = true)
     val restaurant: Restaurant,
+
+    @OneToMany(mappedBy = "chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var chatRoomMembers: MutableList<ChatRoomMember> = mutableListOf(),
+
+    @OneToMany(mappedBy = "chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var chatMessage: MutableList<ChatMessage> = mutableListOf(),
 
     var announcement: String
 ): BaseEntity()

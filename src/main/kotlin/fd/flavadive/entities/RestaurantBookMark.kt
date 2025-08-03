@@ -1,16 +1,15 @@
 package fd.flavadive.entities
 
-import fd.flavadive.common.enums.NotificationType
-import fd.flavadive.common.enums.Role
 import jakarta.persistence.*
 
 @Entity
 @Table(name = "RESTAURANT_BOOK_MARK")
 class RestaurantBookMark (
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
     val restaurant: Restaurant,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     val member: Member
 ): BaseEntity()

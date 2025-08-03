@@ -1,15 +1,16 @@
 package fd.flavadive.entities
 
-import jakarta.persistence.Entity
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "FLAVA_DIARY_DETAILS")
 class FlavaDiaryDetails (
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "flava_diary_id", nullable = false)
     val flavaDiary: FlavaDiary,
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "flavaDiaryDetails", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val diaryDetailsBookMarks: MutableList<DiaryDetailsBookMark> = mutableListOf(),
 
     var menuName: String,
     var menuImagePath: String,

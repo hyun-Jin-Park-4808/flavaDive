@@ -29,8 +29,36 @@ class Member (
     var mannerScore: Long = 0,
     var isMonthlyEvaluator: Boolean = false,
     var businessRegistrationNumber: String? = null,
-    var businessRegistrationImagePath: String? = null
-): BaseEntity(), UserDetails {
+    var businessRegistrationImagePath: String? = null,
+
+    @OneToMany(mappedBy = "member")
+    var chatRooms: MutableList<ChatRoom> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var chatRoomMembers: MutableList<ChatRoomMember> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var chatBookMarks: MutableList<ChatBookMark> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var notifications: MutableSet<Notification> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var diaryDetailsBookMarks: MutableList<DiaryDetailsBookMark> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var flavaDiaries: MutableList<FlavaDiary> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member")
+    var restaurants: MutableList<Restaurant> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var restaurantBookMarks: MutableList<RestaurantBookMark> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member")
+    var reservations: MutableList<Reservation> = mutableListOf()
+
+    ): BaseEntity(), UserDetails {
 
     override fun getUsername(): String = email
     override fun getPassword(): String = password

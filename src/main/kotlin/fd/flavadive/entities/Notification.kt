@@ -10,7 +10,8 @@ class Notification (
     @Enumerated(EnumType.STRING)
     val notificationType: NotificationType,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
 
     var content: String

@@ -11,9 +11,9 @@ import java.time.LocalTime
 @Entity
 @Table(name = "PAYMENT")
 class Payment (
-
-    @ManyToOne
-    val restaurant: Restaurant,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = false)
+    val reservation: Reservation,
 
     @Enumerated(EnumType.STRING)
     var payMethod: PayMethod,

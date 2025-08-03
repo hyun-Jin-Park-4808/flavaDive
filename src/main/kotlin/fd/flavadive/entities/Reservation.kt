@@ -8,12 +8,16 @@ import java.time.LocalTime
 @Entity
 @Table(name = "RESERVATION")
 class Reservation (
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
     val restaurant: Restaurant,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
+
+    @OneToMany(mappedBy = "reservation")
+    var payments: MutableList<Payment> = mutableListOf(),
 
     var reservationDate: LocalDate,
     var reservationTime: LocalTime,
