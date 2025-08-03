@@ -15,5 +15,6 @@ enum class ErrorCode(val errorMessage: String, val httpStatus: HttpStatus) {
     INTERNAL_SERVER_ERROR("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     TOKEN_EXPIRED("Token expired", HttpStatus.UNAUTHORIZED),
     ALREADY_EXISTED_EMAIL("Already existed email.", HttpStatus.CONFLICT),
+    ALREADY_EXISTED_PHONE_NUMBER("Already existed phone number.", HttpStatus.CONFLICT),
     ALREADY_USED_TOKEN("Already used reset token.", HttpStatus.CONFLICT),
 }
