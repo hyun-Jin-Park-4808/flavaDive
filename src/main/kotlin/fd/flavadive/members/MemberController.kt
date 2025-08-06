@@ -32,4 +32,15 @@ class MemberController(
         val result = memberService.updateUser(email, request)
         return ResponseEntity.ok(ApiResponse(result))
     }
+
+    @DeleteMapping()
+    fun deleteUser(
+        principal: Principal
+    ): ResponseEntity<ApiResponse<Success>> {
+        val email = principal.name
+        val result = memberService.deleteUser(email)
+        return ResponseEntity.ok(ApiResponse(result))
+    }
+
+
 }

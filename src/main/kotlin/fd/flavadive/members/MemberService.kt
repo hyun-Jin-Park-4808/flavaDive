@@ -42,4 +42,13 @@ class MemberService(
 
         return Success(true)
     }
+
+    @Transactional
+    fun deleteUser(email: String): Success {
+        val member = memberRepository.findByEmail(email)
+        ?: throw FlavaException(ErrorCode.NOT_FOUND)
+        memberRepository.delete(member)
+
+        return Success(true)
+    }
 }

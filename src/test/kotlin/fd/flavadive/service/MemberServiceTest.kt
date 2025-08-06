@@ -18,6 +18,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 import kotlin.test.Test
+import io.mockk.just
+import io.mockk.Runs
+import io.mockk.verify
 
 @ExtendWith(MockKExtension::class)
 class MemberServiceTest {
@@ -96,7 +99,7 @@ class MemberServiceTest {
     fun `회원 정보 수정-회원이 없으면 예외를 던진다` () {
         // given
         val email = "invalidEmail@gmail.com"
-        val request = createUpdateUserRequest();
+        val request = createUpdateUserRequest()
         every { memberRepository.findByEmail(email) } returns null
 
         // when & then
@@ -136,6 +139,35 @@ class MemberServiceTest {
         val result = memberService.updateUser(email, request)
 
         // then
+        assertEquals(true, result.success)
+    }
+
+    @Test
+    fun `회원 삭제-회원이 없으면 예외를 던진다` () {
+        // given
+        val email = "invalidEmail@gmail.com"
+        every { memberRepository.findByEmail(email) } returns null
+
+        // when & then
+        val exception = assertThrows<FlavaException> {
+            memberService.deleteUser(email)
+        }
+        assertEquals(ErrorCode.NOT_FOUND, exception.errorCode)
+    }
+
+    @Test
+    fun `회원 삭제-회원 삭제에 성공한다` () {
+        // given
+        val email = "test@example.com"
+        val request = createUpdateUserRequest()
+        val foundMember = createTestMember(email)
+        every { memberRepository.findByEmail(email) } returns foundMember
+        every { memberRepository.delete(foundMember) } just Runs
+        // when
+        val result = memberService.deleteUser(email)
+
+        // then
+        verify(exactly = 1) { memberRepository.delete(foundMember) }
         assertEquals(true, result.success)
     }
 }

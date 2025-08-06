@@ -13,17 +13,23 @@ private val log = KotlinLogging.logger {}
 class GlobalExceptionHandler {
 
     @ExceptionHandler(FlavaException::class)
-    fun handleFlavaException(e: FlavaException): ResponseEntity<ErrorResponse>  {
+    fun handleFlavaException(e: FlavaException): ResponseEntity<ErrorResponse> {
         return ResponseEntity
             .status(e.errorCode.httpStatus)
             .body(ErrorResponse(e.errorCode.httpStatus.value(), e.errorCode.errorMessage))
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleException(e: Exception): ResponseEntity<ErrorResponse>  {
+    fun handleException(e: Exception): ResponseEntity<ErrorResponse> {
+        log.error(e.message, e)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR.httpStatus.value(), ErrorCode.INTERNAL_SERVER_ERROR.errorMessage))
+            .body(
+                ErrorResponse(
+                    ErrorCode.INTERNAL_SERVER_ERROR.httpStatus.value(),
+                    e.message ?: ErrorCode.INTERNAL_SERVER_ERROR.errorMessage
+                )
+            )
     }
 }
 

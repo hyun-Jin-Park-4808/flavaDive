@@ -11,3 +11,8 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY
 {
   "nickname": "newNew"
 }
+
+### 멤버 삭제 API 테스트
+DELETE http://localhost:8080/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzU0Mzk4ODg0LCJleHAiOjE3NTQ0MDI0ODR9.7aAGWIrGQKG9IjWWKJBgPHKkApQ5Spi1W6bk6b8yxceuN1HgyeOT8SlHLcXehjH8xF5tNC5OSKr5Kkcf4nQwsA
