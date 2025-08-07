@@ -1,8 +1,10 @@
 package fd.flavadive.members
 
 import fd.flavadive.common.response.Success
+import fd.flavadive.entities.Member
 import fd.flavadive.exception.ErrorCode
 import fd.flavadive.exception.FlavaException
+import fd.flavadive.members.dto.GetMyInformationResponse
 import fd.flavadive.members.dto.GetUserResponse
 import fd.flavadive.members.dto.UpdateUserRequest
 import fd.flavadive.repositories.MemberRepository
@@ -23,6 +25,19 @@ class MemberService(
             nickname = member.nickname,
             mannerScore = member.mannerScore,
             isMonthlyEvaluator = member.isMonthlyEvaluator,
+        )
+    }
+
+    @Transactional
+    fun getMyInformation(member: Member): GetMyInformationResponse {
+        return GetMyInformationResponse(
+            email = member.email,
+            name = member.name,
+            nickname = member.nickname,
+            phoneNumber = member.phoneNumber,
+            mannerScore = member.mannerScore,
+            isMonthlyEvaluator = member.isMonthlyEvaluator,
+            businessRegistrationNumber = member.businessRegistrationNumber ?: "",
         )
     }
 

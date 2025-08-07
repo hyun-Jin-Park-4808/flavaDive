@@ -67,3 +67,7 @@ allOpen {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.test {
+    jvmArgs = listOf("-Xshare:off")
+}

@@ -3,10 +3,15 @@ GET http://localhost:8080/api/users/1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzUzODgwNTc0LCJleHAiOjE3NTM4ODQxNzR9.gOoTkai5CpUFyYiDKKcgeGgKTdS99chsdRAeGa0yband_CCivAuE1CatyyP7wK5VAFGQ6eOu48wP6AKoQfBHog
 
+### 내 정보 조회 API 테스트
+GET http://localhost:8080/api/users/information
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzU0NTY2NTA5LCJleHAiOjE3NTQ1NzAxMDl9.dkQb9VCvcSremXhn5j-fWSYUVX4j-wRFptd9Cz2fnczw4--E4e3NHWqubbHO1XtmHcTC8Nck5n1JnwZA8ar4FA
+
 ### 멤버 수정 API 테스트
 PATCH http://localhost:8080/api/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzUzODgwNTc0LCJleHAiOjE3NTM4ODQxNzR9.gOoTkai5CpUFyYiDKKcgeGgKTdS99chsdRAeGa0yband_CCivAuE1CatyyP7wK5VAFGQ6eOu48wP6AKoQfBHog
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzU0NTY3MDU3LCJleHAiOjE3NTQ1NzA2NTd9._XNiEdSEGEjphOxNEYy6w7zqSWU_Ks3ubdDGUNo7uS13SXHLQGrZq2mfY4Gr7ff7Eb9WDgtiwYQJTkOXjcKvRg
 
 {
   "nickname": "newNew"

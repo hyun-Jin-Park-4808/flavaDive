@@ -2,10 +2,13 @@ package fd.flavadive.members
 
 import fd.flavadive.common.response.ApiResponse
 import fd.flavadive.common.response.Success
+import fd.flavadive.entities.Member
+import fd.flavadive.members.dto.GetMyInformationResponse
 import fd.flavadive.members.dto.GetUserResponse
 import fd.flavadive.members.dto.UpdateUserRequest
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
@@ -19,6 +22,14 @@ class MemberController(
         @PathVariable userId: Long,
     ): ResponseEntity<ApiResponse<GetUserResponse>> {
         val result = memberService.getUser(userId)
+        return ResponseEntity.ok(ApiResponse(result))
+    }
+
+    @GetMapping("/information")
+    fun getMyInformation(
+        @AuthenticationPrincipal member: Member
+    ): ResponseEntity<ApiResponse<GetMyInformationResponse>> {
+        val result = memberService.getMyInformation(member)
         return ResponseEntity.ok(ApiResponse(result))
     }
 

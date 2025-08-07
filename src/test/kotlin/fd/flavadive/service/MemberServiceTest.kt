@@ -159,7 +159,6 @@ class MemberServiceTest {
     fun `회원 삭제-회원 삭제에 성공한다` () {
         // given
         val email = "test@example.com"
-        val request = createUpdateUserRequest()
         val foundMember = createTestMember(email)
         every { memberRepository.findByEmail(email) } returns foundMember
         every { memberRepository.delete(foundMember) } just Runs
@@ -169,5 +168,22 @@ class MemberServiceTest {
         // then
         verify(exactly = 1) { memberRepository.delete(foundMember) }
         assertEquals(true, result.success)
+    }
+
+    @Test
+    fun `내 정보 조회-내 정보 조회에 성공한다` () {
+        // given
+        val foundMember = createTestMember()
+        // when
+        val result = memberService.getMyInformation(foundMember)
+
+        // then
+        assertEquals(foundMember.email, result.email)
+        assertEquals(foundMember.name, result.name)
+        assertEquals(foundMember.nickname, result.nickname)
+        assertEquals(foundMember.phoneNumber, result.phoneNumber)
+        assertEquals(foundMember.mannerScore, result.mannerScore)
+        assertEquals(foundMember.isMonthlyEvaluator, result.isMonthlyEvaluator)
+        assertEquals("", result.businessRegistrationNumber)
     }
 }
