@@ -74,8 +74,14 @@ class JwtAuthenticationFilter(
 
     private fun getPermitAllEndpoints(): Set<String> {
         return hashSetOf(
-            "/api/users/sign-up",
-            "/api/auth/sign-in/**"
+            "/api/auth/sign-up",
+            "/api/auth/sign-in",
+            "/api/auth/find-id",
+            "/api/auth/reset-password",
+            "/api/auth/check-email",
+            "/api/auth/send-code",
+            "/api/auth/verify-code",
+            "/api/auth/social-login/*",
         )
     }
 }

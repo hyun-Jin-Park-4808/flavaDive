@@ -1,5 +1,5 @@
 ### 회원가입 API 테스트
-POST http://localhost:8080/api/users/sign-up
+POST http://localhost:8080/api/auth/sign-up
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### 로그인 API 테스트
-POST http://localhost:8080/api/users/sign-in
+POST http://localhost:8080/api/auth/sign-in
 Content-Type: application/json
 
 {
@@ -21,24 +21,15 @@ Content-Type: application/json
 }
 
 ### 아이디 찾기 API 테스트
-POST http://localhost:8080/api/users/find-id
+POST http://localhost:8080/api/auth/find-id
 Content-Type: application/json
 
 {
   "phoneNumber": "01012345677"
 }
 
-### 로그인 API 테스트
-POST http://localhost:8080/api/users/sign-in
-Content-Type: application/json
-
-{
-  "email": "guswlsdl4808@gmail.com",
-  "password": "1234"
-}
-
 ### 비밀번호 재설정 API 테스트
-PATCH http://localhost:8080/api/users/reset-password
+PATCH http://localhost:8080/api/auth/reset-password
 Content-Type: application/json
 
 {
@@ -47,6 +38,14 @@ Content-Type: application/json
 }
 
 ### 로그아웃 API 테스트
-POST http://localhost:8080/api/users/logout
+POST http://localhost:8080/api/auth/logout
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN3bHNkbDQ4MDhAZ21haWwuY29tIiwiaWF0IjoxNzUzMzY2NjU1LCJleHAiOjE3NTMzNzAyNTV9.9lwshrJv3gabEskeKBEQi0BzVtcTw0DJ5qiv6uxwGgRYsXm7hb4xDfvA2rq1lCQt9a9i9pZGfbO3u-oo5XapEA
+
+### 이메일 중복 검사 API 테스트
+POST http://localhost:8080/api/auth/check-email
+Content-Type: application/json
+
+{
+  "email": "guswlsdl4808@gmail.com"
+}

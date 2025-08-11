@@ -8,3 +8,12 @@ data class FindEmailRequest(
 data class FindEmailResponse(
     val email: String
 )
+
+
+data class CheckEmailRequest(
+    val email: String
+)
+
+data class CheckEmailResponse(
+    val available: Boolean
+)

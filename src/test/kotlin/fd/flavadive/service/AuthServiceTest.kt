@@ -355,4 +355,6 @@ class AuthServiceTest {
         // then
         assertEquals(Success(true), result)
     }
+
+    // TODO : 이메일 중복 검사 테스트
 }

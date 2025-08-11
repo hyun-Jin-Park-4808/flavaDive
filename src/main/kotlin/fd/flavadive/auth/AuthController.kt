@@ -8,7 +8,7 @@ import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("api/users")
+@RequestMapping("api/auth")
 @RestController
 class AuthController(
     private val authService: AuthService,
@@ -57,4 +57,15 @@ class AuthController(
         val result = authService.logout(token)
         return ResponseEntity.ok(ApiResponse(result))
     }
+
+    @PostMapping("/check-email")
+    fun checkEmail(
+        @Valid @RequestBody
+        request: CheckEmailRequest
+    ): ResponseEntity<ApiResponse<CheckEmailResponse>> {
+        val result = authService.checkEmail(request)
+        return ResponseEntity.ok(ApiResponse(result))
+    }
+
+
 }

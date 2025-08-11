@@ -93,4 +93,11 @@ class AuthService(
         redisTemplate.opsForValue().set(email, accessToken) // 로그인할 때 이 엑세스 토큰 존재하면 에러 발생
         return Success(true)
     }
+
+    @Transactional
+    fun checkEmail(checkEmailRequest: CheckEmailRequest): CheckEmailResponse {
+        val existingUser = memberRepository.findByEmail(checkEmailRequest.email)
+        val available = existingUser == null
+        return CheckEmailResponse(available)
+    }
 }

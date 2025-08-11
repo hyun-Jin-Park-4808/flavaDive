@@ -59,10 +59,14 @@ class SecurityConfig(
             .authorizeHttpRequests { authorizeRequest ->
                 authorizeRequest
                     .requestMatchers(
-                        "/api/users/sign-up",
-                        "/api/users/sign-in",
-                        "/api/users/find-id",
-                        "/api/users/reset-password",
+                        "/api/auth/sign-up",
+                        "/api/auth/sign-in",
+                        "/api/auth/find-id",
+                        "/api/auth/reset-password",
+                        "/api/auth/check-email",
+                        "/api/auth/send-code",
+                        "/api/auth/verify-code",
+                        "/api/auth/social-login/*",
                     )
                     .permitAll()
                     .anyRequest().authenticated()
