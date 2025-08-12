@@ -169,6 +169,12 @@ class AuthServiceTest {
         newPassword = newPassword
     )
 
+    private fun createCheckEmailRequest(
+        email: String = "test@example.com",
+    ) = CheckEmailRequest(
+        email = email,
+    )
+
     @Test
     fun `로그인-멤버가 존재하고, 패스워드가 일치한다`() {
         // given
@@ -356,5 +362,29 @@ class AuthServiceTest {
         assertEquals(Success(true), result)
     }
 
-    // TODO : 이메일 중복 검사 테스트
+    @Test
+    fun `이메일 중복 검사-중복 이메일이 존재하면 false를 반환한다`() {
+        // given
+        val request = createCheckEmailRequest()
+        val foundMember = createTestMember()
+        every { memberRepository.findByEmail(request.email) } returns foundMember
+        // when
+        val result = authService.checkEmail(request)
+
+        // then
+        assertEquals(CheckEmailResponse(false), result)
+    }
+
+    @Test
+    fun `이메일 중복 검사-중복 이메일이 존재하지 않으면 true를 반환한다`() {
+        // given
+        val request = createCheckEmailRequest()
+        val foundMember = createTestMember()
+        every { memberRepository.findByEmail(request.email) } returns null
+        // when
+        val result = authService.checkEmail(request)
+
+        // then
+        assertEquals(CheckEmailResponse(true), result)
+    }
 }
